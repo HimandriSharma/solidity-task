@@ -5,20 +5,20 @@ import "./PaymentToken.sol";
 import "./ChampionNFT.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-abstract contract GuessingGame is Ownable {
+contract GuessingGame is Ownable {
     PaymentToken public token;
     ChampionNFT public nft;
     uint256 public entranceFee;
     address public previousPlayer;
-    string public previousGuess;
+    uint256 public previousGuess;
     bool public gameStarted;
 
     mapping(address => bool) public hasPlayed;
 
-    event GameStarted(string guess);
-    event PlayerGuessed(address player, string guess, bool won);
+    event GameStarted(uint256 guess);
+    event PlayerGuessed(address player, uint256 guess, bool won);
 
-    constructor(address _token, address _nft) {
+    constructor(address _token, address _nft) Ownable(msg.sender) {
         token = PaymentToken(_token);
         nft = ChampionNFT(_nft);
     }
@@ -27,7 +27,7 @@ abstract contract GuessingGame is Ownable {
         entranceFee = _fee;
     }
 
-    function startGame(string calldata guessNumber) external onlyOwner {
+    function startGame(uint256 guessNumber) external onlyOwner {
         require(!gameStarted, "Game already started");
         previousPlayer = msg.sender;
         previousGuess = guessNumber;
@@ -35,16 +35,12 @@ abstract contract GuessingGame is Ownable {
         emit GameStarted(guessNumber);
     }
 
-    function guess(string calldata color) external {
+    function guess(uint256 color) external {
+
         require(gameStarted, "Game not started");
         require(!hasPlayed[msg.sender], "Player can only play once");
-        require(
-            keccak256(abi.encodePacked(color)) ==
-                keccak256(abi.encodePacked("red")) ||
-                keccak256(abi.encodePacked(color)) ==
-                keccak256(abi.encodePacked("black")),
-            "Invalid color"
-        );
+        
+        require (color<2, "Invalid color");
 
         hasPlayed[msg.sender] = true;
         require(
@@ -53,8 +49,7 @@ abstract contract GuessingGame is Ownable {
         );
 
         if (
-            keccak256(abi.encodePacked(previousGuess)) ==
-            keccak256(abi.encodePacked(color))
+            previousGuess == color
         ) {
             // Previous player wins
             token.transfer(previousPlayer, entranceFee * 2);

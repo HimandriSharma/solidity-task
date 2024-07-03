@@ -4,8 +4,8 @@ pragma solidity ^0.8.20;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-abstract contract PaymentToken is ERC20, Ownable {
-    constructor() ERC20("GameToken", "GT") {}
+contract PaymentToken is ERC20, Ownable {
+    constructor() ERC20("GameToken", "GT") Ownable(msg.sender) {}
 
     function mint() external payable {
         require(msg.value > 0, "Must send ETH to mint tokens");

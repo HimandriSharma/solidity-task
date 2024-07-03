@@ -4,11 +4,11 @@ pragma solidity ^0.8.20;
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-abstract contract ChampionNFT is ERC721, Ownable {
+contract ChampionNFT is ERC721, Ownable {
     uint256 public nextTokenId;
     mapping(uint256 => address) public tokenOwners;
 
-    constructor() ERC721("ChampionNFT", "CNFT") {}
+    constructor() ERC721("ChampionNFT", "CNFT") Ownable(msg.sender) {}
 
     function mint(address to) external onlyOwner {
         uint256 tokenId = nextTokenId;
