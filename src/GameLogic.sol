@@ -3,6 +3,7 @@ pragma solidity ^0.8.20;
 
 import "./PaymentToken.sol";
 import "./ChampionNFT.sol";
+import "forge-std/console.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract GuessingGame is Ownable {
@@ -24,6 +25,7 @@ contract GuessingGame is Ownable {
     }
 
     function setEntranceFee(uint256 _fee) external onlyOwner {
+        console.log(_fee);
         entranceFee = _fee;
     }
 
@@ -52,12 +54,12 @@ contract GuessingGame is Ownable {
             previousGuess == color
         ) {
             // Previous player wins
-            token.transfer(previousPlayer, entranceFee * 2);
-            nft.mint(previousPlayer);
-            emit PlayerGuessed(previousPlayer, previousGuess, true);
+            token.transfer(msg.sender, entranceFee * 2);
+            nft.mint(msg.sender);
+            emit PlayerGuessed(msg.sender, previousGuess, true);
         } else {
             // Previous player loses
-            emit PlayerGuessed(previousPlayer, previousGuess, false);
+            emit PlayerGuessed(msg.sender, previousGuess, false);
         }
 
         // Set current player as previous player for next round
