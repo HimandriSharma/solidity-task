@@ -32,9 +32,5 @@ contract TestSetup is Test {
         token.transfer(address(game), 3 ether);
         game.setEntranceFee(1 ether);
         vm.stopPrank();
-        // vm.startPrank(owner);
-        // game.setEntranceFee(1 ether);
-        // game.startGame(0);
-        // vm.stopPrank();
     }
 }
